@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 
 # ===========================
 # Base User
@@ -92,5 +93,50 @@ class UserOut(UserBase):
     doctor: Optional[DoctorOut] = None
     admin: Optional[AdminOut] = None
     secretary: Optional[SecretaryOut] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# Clinic
+# ===========================
+class ClinicBase(BaseModel):
+    name: str
+    address: str
+    city: str
+    cap: str
+    phone: str
+    email: str
+
+class ClinicCreate(ClinicBase):
+    pass  # for now nothing to add
+
+class ClinicOut(ClinicBase):
+    id: int
+    doctors: Optional[List[str]] = []      # lista di identity_number dei dottori
+    secretaries: Optional[List[str]] = []  # lista di identity_number delle segretarie
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AppointmentCreate(BaseModel):
+    doctor_id: str
+    patient_id: str
+    clinic_id: int
+    datetime: datetime
+    examination_type: str
+    notes: Optional[str] = None
+    status: Optional[str] = "scheduled"
+
+
+
+class AppointmentOut(BaseModel):
+    id: int
+    doctor_id: str
+    patient_id: str
+    clinic_id: int
+    datetime: datetime
+    examination_type: str
+    notes: Optional[str] = None
+    status: str
 
     model_config = ConfigDict(from_attributes=True)
