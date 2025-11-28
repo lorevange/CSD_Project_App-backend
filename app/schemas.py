@@ -112,8 +112,8 @@ class ClinicCreate(ClinicBase):
 
 class ClinicOut(ClinicBase):
     id: int
-    doctors: Optional[List[str]] = []      # lista di identity_number dei dottori
-    secretaries: Optional[List[str]] = []  # lista di identity_number delle segretarie
+    doctors: Optional[List[DoctorOut]] = []      # lista di identity_number dei dottori
+    secretaries: Optional[List[SecretaryOut]] = []  # lista di identity_number delle segretarie
 
     model_config = ConfigDict(from_attributes=True)
 
