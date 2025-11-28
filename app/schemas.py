@@ -44,6 +44,9 @@ class DoctorCreate(BaseModel):
 
 
 class DoctorOut(BaseModel):
+    identity_number: str
+    first_name: str
+    last_name: str
     license_number: str
     specialization: str
     model_config = ConfigDict(from_attributes=True)

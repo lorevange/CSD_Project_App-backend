@@ -38,6 +38,8 @@ class Doctor(Base):
     __tablename__ = "Doctor"
 
     identity_number = Column(String, ForeignKey("User.identity_number"), primary_key=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
     license_number = Column(String, nullable=False)
     specialization = Column(String, nullable=False)
 
