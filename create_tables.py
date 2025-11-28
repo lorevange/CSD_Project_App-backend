@@ -1,5 +1,5 @@
 from app.database import Base, engine
-from app import models  # importa i modelli definiti in models.py
+from app import models  # importa i modelli definiti nel package models
 
 def create_all_tables():
     print("Creazione delle tabelle nel database...")
