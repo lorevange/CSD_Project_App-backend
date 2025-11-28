@@ -2,6 +2,7 @@ from app.database import Base
 from .user import User, Patient, Doctor, Admin, Secretary
 from .clinic import Clinic, clinic_doctors, clinic_secretaries
 from .appointment import Appointment
+from .day import Day
 
 __all__ = [
     "Base",
@@ -14,4 +15,5 @@ __all__ = [
     "clinic_doctors",
     "clinic_secretaries",
     "Appointment",
+    "Day",
 ]

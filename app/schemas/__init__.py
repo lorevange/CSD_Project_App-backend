@@ -12,6 +12,7 @@ from .users import (
 )
 from .clinics import ClinicBase, ClinicCreate, ClinicOut
 from .appointments import AppointmentCreate, AppointmentOut
+from .days import DayCreate, DayOut
 
 __all__ = [
     "UserBase",
@@ -29,4 +30,6 @@ __all__ = [
     "ClinicOut",
     "AppointmentCreate",
     "AppointmentOut",
+    "DayCreate",
+    "DayOut",
 ]
