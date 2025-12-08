@@ -1,19 +1,12 @@
 from app.database import Base
-from .user import User, Patient, Doctor, Admin, Secretary
-from .clinic import Clinic, clinic_doctors, clinic_secretaries
-from .appointment import Appointment
-from .day import Day
+from .model_user import User, Doctor
+from .model_appointment import Appointment
+from .model_day import Day
 
 __all__ = [
     "Base",
     "User",
-    "Patient",
     "Doctor",
-    "Admin",
-    "Secretary",
-    "Clinic",
-    "clinic_doctors",
-    "clinic_secretaries",
     "Appointment",
     "Day",
 ]
