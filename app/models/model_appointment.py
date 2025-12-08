@@ -9,13 +9,9 @@ class Appointment(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     doctor_id = Column(String, ForeignKey("Doctor.identity_number"), nullable=False)
-    patient_id = Column(String, ForeignKey("Patient.identity_number"), nullable=False)
-    clinic_id = Column(Integer, ForeignKey("Clinic.id"), nullable=False)
     datetime = Column(DateTime, nullable=False)
     examination_type = Column(String, nullable=False)
     notes = Column(Text, nullable=True)
     status = Column(String, nullable=False, default="scheduled")
 
     doctor = relationship("Doctor", back_populates="appointments")
-    patient = relationship("Patient", back_populates="appointments")
-    clinic = relationship("Clinic", back_populates="appointments")

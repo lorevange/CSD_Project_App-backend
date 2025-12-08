@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 
 from .. import models, schemas
 from ..deps import get_db
-from ..services.users import create_user
-from ..queries.query_doctors import get_doctors_by_clinic_id
+from ..services.service_user import create_user
+from ..queries.query_doctors import get_doctor_by_id
 
 router = APIRouter(prefix="/doctors", tags=["doctors"])
 
@@ -25,6 +25,6 @@ def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.get("/{clinic_id}", response_model=list[schemas.DoctorOut])
-def list_doctors_by_clinic(clinic_id: int, db: Session = Depends(get_db)):
-    return get_doctors_by_clinic_id(clinic_id, db)
+@router.get("/{doctor_id}", response_model=schemas.DoctorOut)
+def get_doctor(doctor_id: str, db: Session = Depends(get_db)):
+    return get_doctor_by_id(doctor_id, db)
