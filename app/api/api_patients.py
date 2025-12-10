@@ -9,6 +9,6 @@ router = APIRouter(prefix="/patients", tags=["patients"])
 
 
 @router.post("/", response_model=schemas.UserOut)
-def create_patient(patient: schemas.UserBase, db: Session = Depends(get_db)):
+def create_patient(patient: schemas.UserCreateBase, db: Session = Depends(get_db)):
     db_user = create_user(patient, profile="patient", db=db)
     return db_user
