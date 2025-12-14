@@ -21,3 +21,11 @@ def get_user_by_email(email: str, db: Session) -> models.User:
         .first()
     )
     return user
+
+def get_user_by_identity_number(identity_number: str, db: Session) -> models.User:
+    user = (
+        db.query(models.User)
+        .filter(models.User.identity_number == identity_number)
+        .first()
+    )
+    return user
