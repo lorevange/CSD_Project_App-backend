@@ -19,6 +19,10 @@ class UserBase(BaseModel):
     email: str
     phone_number: Optional[str] = None
 
+class UserEdit(BaseModel):
+    first_name: str
+    last_name: str
+    identity_number: str
 
 class DoctorCreate(UserCreateBase):
     license_number: str
