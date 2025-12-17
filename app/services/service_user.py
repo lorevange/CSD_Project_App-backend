@@ -18,3 +18,6 @@ def create_user(base: schemas.UserCreateBase, profile: str, db: Session) -> mode
     db.commit()
     db.refresh(user)
     return user
+
+
+
