@@ -1,20 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
-from app.auth import get_current_user
-from app.models import User
-
-from app.deps import get_db
-from app.auth import create_access_token
-from app.queries.query_users import authenticate_user
-from app.schemas import LoginRequest, LoginResponse
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
 from app.auth import create_access_token, get_current_user
 from app.deps import get_db
-from app.queries.query_users import authenticate_user
+from app.queries.query_users import get_user_by_email_and_password
 from app.schemas import LoginRequest, LoginResponse, UserOut
-from app.models import User
 router = APIRouter(prefix="/users", tags=["users"])
 
 
@@ -24,9 +13,7 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     Login di un utente con email e password.
     Restituisce token JWT + dati utente.
     """
-    user = authenticate_user(data.email, data.password, db)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    user = get_user_by_email_and_password(data.email, data.password, db)
 
     access_token = create_access_token({"sub": user.email})
 
@@ -42,8 +29,28 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
 
 
 @router.get("/me", response_model=UserOut)
-def read_users_me(current_user: User = Depends(get_current_user)):
+def validate_token(
+    authorization: str | None = Header(default=None, alias="Authorization"),
+    db: Session = Depends(get_db),
+):
     """
-    Restituisce i dati dell'utente loggato (endpoint protetto)
+    Endpoint protetto per validare il token JWT.
+    Restituisce i dati dell'utente autenticato.
     """
+    if not authorization:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing Authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    scheme, _, token = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    current_user = get_current_user(token=token, db=db)
     return UserOut.from_orm(current_user)
