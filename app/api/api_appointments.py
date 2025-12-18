@@ -23,3 +23,5 @@ def create_appointment(appointment: schemas.AppointmentCreate, db: Session = Dep
     db.commit()
     db.refresh(db_appointment)
     return db_appointment
+
+
