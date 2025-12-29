@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, String
+from sqlalchemy import Boolean, Column, Float, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -30,6 +30,10 @@ class Doctor(Base):
     last_name = Column(String, nullable=False)
     license_number = Column(String, nullable=False)
     specialization = Column(String, nullable=False)
+    city = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
 
     user = relationship("User", back_populates="doctor")
     appointments = relationship("Appointment", back_populates="doctor")
