@@ -27,6 +27,10 @@ class UserEdit(BaseModel):
 class DoctorCreate(UserCreateBase):
     license_number: str
     specialization: str
+    city: Optional[str] = None
+    address: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class DoctorOut(BaseModel):
@@ -35,6 +39,10 @@ class DoctorOut(BaseModel):
     last_name: str
     license_number: str
     specialization: str
+    city: Optional[str] = None
+    address: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     model_config = ConfigDict(from_attributes=True)
 
 

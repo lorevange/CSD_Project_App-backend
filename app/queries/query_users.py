@@ -15,6 +15,7 @@ def get_user_by_email_and_password(email: str, password: str, db: Session) -> mo
         raise HTTPException(status_code=404, detail="User not found.")
     if user.password != password:
         raise HTTPException(status_code=404, detail="Wrong Password.")
+    return user
 
 
 def get_user_by_email(email: str, db: Session) -> models.User:
