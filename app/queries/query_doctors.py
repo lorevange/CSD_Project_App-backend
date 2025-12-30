@@ -20,7 +20,7 @@ def search_doctors(db: Session, query: str | None = None, city: str | None = Non
     
     like = f"%{query}%"
     city_like = f"%{city}%"
-    query_obj
+    query_obj = None
     score = (
         case((models.Doctor.address.ilike(like), 3), else_=0)
         + case((models.Doctor.last_name.ilike(like), 2), else_=0)
