@@ -16,6 +16,7 @@ class User(Base):
     password = Column(String, nullable=True)
 
     doctor = relationship("Doctor", back_populates="user", uselist=False)
+    appointments = relationship("Appointment", back_populates="user", foreign_keys="Appointment.user_id")
 
     @property
     def id(self) -> str:
