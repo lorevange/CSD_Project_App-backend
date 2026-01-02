@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, LargeBinary, String
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -14,6 +15,7 @@ class User(Base):
     email = Column(String, nullable=False)
     phone_number = Column(String, nullable=True)
     password = Column(String, nullable=True)
+    photo = Column(LargeBinary, nullable=True)
 
     doctor = relationship("Doctor", back_populates="user", uselist=False)
     appointments = relationship("Appointment", back_populates="user", foreign_keys="Appointment.user_id")
@@ -40,3 +42,4 @@ class Doctor(Base):
     user = relationship("User", back_populates="doctor")
     appointments = relationship("Appointment", back_populates="doctor")
     days = relationship("Day", back_populates="doctor")
+    photo = association_proxy("user", "photo")

@@ -18,19 +18,22 @@ def create_user(base: schemas.UserCreateBase, profile: str, db: Session) -> mode
         email=base.email,
         phone_number=base.phone_number,
         password=base.password,
+        photo=base.photo,
     )
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
 
-def edit_user(identity_number: str, first_name: str, last_name: str, db: Session) -> models.User:
+def edit_user(identity_number: str, first_name: str, last_name: str, photo: bytes | None, db: Session) -> models.User:
     user = get_user_by_identity_number(identity_number, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
     user.first_name = first_name
     user.last_name = last_name
+    if photo is not None:
+        user.photo = photo
 
     db.commit()
     db.refresh(user)

@@ -10,6 +10,7 @@ class UserCreateBase(BaseModel):
     email: str
     phone_number: Optional[str] = None
     password: str
+    photo: Optional[bytes] = None
 
 
 class UserBase(BaseModel):
@@ -18,11 +19,13 @@ class UserBase(BaseModel):
     identity_number: str
     email: str
     phone_number: Optional[str] = None
+    photo: Optional[bytes] = None
 
 class UserEdit(BaseModel):
     first_name: str
     last_name: str
     identity_number: str
+    photo: Optional[bytes] = None
 
 class DoctorCreate(UserCreateBase):
     license_number: str
@@ -44,6 +47,7 @@ class DoctorOut(BaseModel):
     address: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    photo: Optional[bytes] = None
     model_config = ConfigDict(from_attributes=True)
 
 
