@@ -27,6 +27,15 @@ def get_user_by_email(email: str, db: Session) -> models.User:
     return user
 
 
+def get_user_by_id(user_id: int, db: Session) -> models.User:
+    user = (
+        db.query(models.User)
+        .filter(models.User.id == user_id)
+        .first()
+    )
+    return user
+
+
 def get_user_by_identity_number(identity_number: str, db: Session) -> models.User:
     user = (
         db.query(models.User)

@@ -22,7 +22,7 @@ def create_appointment(appointment: schemas.AppointmentCreate, db: Session = Dep
 @router.get("/", response_model=List[schemas.AppointmentOut])
 def list_appointments(
     doctor_id: Optional[int] = None,
-    user_id: Optional[str] = None,
+    user_id: Optional[int] = None,
     start_from: Optional[datetime] = None,
     start_to: Optional[datetime] = None,
     status: Optional[str] = None,

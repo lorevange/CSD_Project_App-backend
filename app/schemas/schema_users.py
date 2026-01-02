@@ -1,6 +1,10 @@
-from typing import Optional
+from typing import Optional, List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
+from app.schemas.schema_appointments import AppointmentOut
+from app.schemas.schema_days import DayOut
+from app.schemas.schema_doctor_services import DoctorServiceOut
 
 
 class UserCreateBase(BaseModel):
@@ -48,12 +52,16 @@ class DoctorOut(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     photo: Optional[bytes] = None
+    appointments: List[AppointmentOut] = Field(default_factory=list)
+    days: List[DayOut] = Field(default_factory=list)
+    services: List[DoctorServiceOut] = Field(default_factory=list)
     model_config = ConfigDict(from_attributes=True)
 
 
 class UserOut(UserBase):
-    id: str
+    id: int
     profile: str
     doctor: Optional[DoctorOut] = None
+    appointments: List[AppointmentOut] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
