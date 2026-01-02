@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Float, ForeignKey, String
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -26,7 +26,8 @@ class User(Base):
 class Doctor(Base):
     __tablename__ = "Doctor"
 
-    identity_number = Column(String, ForeignKey("User.identity_number"), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    identity_number = Column(String, ForeignKey("User.identity_number"), nullable=False, unique=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     license_number = Column(String, nullable=False)

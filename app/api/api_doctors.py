@@ -37,5 +37,5 @@ def search_doctor(query: str | None = None, city: str | None = None, db: Session
 
 
 @router.get("/{doctor_id}", response_model=schemas.DoctorOut)
-def get_doctor(doctor_id: str, db: Session = Depends(get_db)):
+def get_doctor(doctor_id: int, db: Session = Depends(get_db)):
     return get_doctor_by_id(doctor_id, db)

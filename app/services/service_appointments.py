@@ -30,7 +30,7 @@ def create_appointment(payload, db: Session) -> models.Appointment:
     conflict = (
         db.query(models.Appointment)
         .filter(
-            models.Appointment.doctor_id == doctor.identity_number,
+            models.Appointment.doctor_id == doctor.id,
             models.Appointment.start_datetime == start,
             models.Appointment.status == "scheduled",
         )
@@ -40,7 +40,7 @@ def create_appointment(payload, db: Session) -> models.Appointment:
         raise HTTPException(status_code=409, detail="Slot not available")
 
     appt = models.Appointment(
-        doctor_id=doctor.identity_number,
+        doctor_id=doctor.id,
         user_id=user.identity_number,
         start_datetime=start,
         end_datetime=end,
@@ -59,7 +59,7 @@ def create_appointment(payload, db: Session) -> models.Appointment:
     return appt
 
 
-def list_appointments(db: Session, doctor_id: str | None = None, user_id: str | None = None,
+def list_appointments(db: Session, doctor_id: int | None = None, user_id: str | None = None,
                       start_from: datetime | None = None, start_to: datetime | None = None) -> list[models.Appointment]:
     query = db.query(models.Appointment)
     if doctor_id:

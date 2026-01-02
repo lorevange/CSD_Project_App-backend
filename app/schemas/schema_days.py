@@ -8,7 +8,7 @@ class DayCreate(BaseModel):
     opening: time
     closing: time
     is_closed: bool
-    doctor_id: str
+    doctor_id: int
 
 
 class DayOut(BaseModel):
@@ -17,6 +17,6 @@ class DayOut(BaseModel):
     opening: time
     closing: time
     is_closed: bool
-    doctor_id: str
+    doctor_id: int
 
     model_config = ConfigDict(from_attributes=True)

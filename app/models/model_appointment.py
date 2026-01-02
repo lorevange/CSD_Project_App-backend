@@ -12,7 +12,7 @@ class Appointment(Base):
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    doctor_id = Column(String, ForeignKey("Doctor.identity_number"), nullable=False)
+    doctor_id = Column(Integer, ForeignKey("Doctor.id"), nullable=False)
     user_id = Column(String, ForeignKey("User.identity_number"), nullable=False)
     start_datetime = Column(DateTime, nullable=False)
     end_datetime = Column(DateTime, nullable=False)

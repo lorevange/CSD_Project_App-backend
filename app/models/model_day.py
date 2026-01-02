@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Time
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, Time
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -12,6 +12,6 @@ class Day(Base):
     opening = Column(Time, nullable=False)
     closing = Column(Time, nullable=False)
     is_closed = Column(Boolean, nullable=False)
-    doctor_id = Column(String, ForeignKey("Doctor.identity_number"), nullable=False)
+    doctor_id = Column(Integer, ForeignKey("Doctor.id"), nullable=False)
 
     doctor = relationship("Doctor", back_populates="days")

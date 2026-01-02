@@ -34,6 +34,7 @@ class DoctorCreate(UserCreateBase):
 
 
 class DoctorOut(BaseModel):
+    id: int
     identity_number: str
     first_name: str
     last_name: str
