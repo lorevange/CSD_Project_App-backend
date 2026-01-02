@@ -6,6 +6,23 @@ from pydantic import BaseModel, ConfigDict
 
 from app.schemas.schema_doctor_services import DoctorServiceOut
 
+
+class AppointmentDoctorOut(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AppointmentUserOut(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class AppointmentCreate(BaseModel):
     doctor_id: int
     user_id: int
@@ -28,5 +45,7 @@ class AppointmentOut(BaseModel):
     notes: Optional[str] = None
     status: str
     doctor_service: Optional[DoctorServiceOut] = None
+    doctor: Optional[AppointmentDoctorOut] = None
+    user: Optional[AppointmentUserOut] = None
 
     model_config = ConfigDict(from_attributes=True)

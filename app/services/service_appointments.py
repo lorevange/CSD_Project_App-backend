@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app import models
 from app.queries.query_doctors import get_doctor_by_id
@@ -75,7 +75,14 @@ def create_appointment(payload, db: Session) -> models.Appointment:
 
 def list_appointments(db: Session, doctor_id: int | None = None, user_id: int | None = None,
                       start_from: datetime | None = None, start_to: datetime | None = None, status: str | None = None) -> list[models.Appointment]:
-    query = db.query(models.Appointment)
+    query = (
+        db.query(models.Appointment)
+        .options(
+            selectinload(models.Appointment.doctor),
+            selectinload(models.Appointment.doctor_service),
+            selectinload(models.Appointment.user),
+        )
+    )
     if doctor_id:
         query = query.filter(models.Appointment.doctor_id == doctor_id)
     if user_id:
