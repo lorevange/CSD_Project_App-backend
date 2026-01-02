@@ -24,6 +24,7 @@ def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
         address=doctor.address,
         latitude=doctor.latitude,
         longitude=doctor.longitude,
+        information=doctor.information,
     )
     db.add(db_doctor)
     db.commit()

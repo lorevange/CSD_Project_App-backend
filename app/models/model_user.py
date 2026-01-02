@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, LargeBinary, String
+from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, LargeBinary, String, Text
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
@@ -35,6 +35,7 @@ class Doctor(Base):
     address = Column(String, nullable=True)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+    information = Column(Text, nullable=True)
 
     user = relationship("User", back_populates="doctor")
     appointments = relationship("Appointment", back_populates="doctor")

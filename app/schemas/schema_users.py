@@ -30,6 +30,7 @@ class UserEdit(BaseModel):
     last_name: str
     identity_number: str
     photo: Optional[bytes] = None
+    information: Optional[str] = None
 
 class DoctorCreate(UserCreateBase):
     license_number: str
@@ -38,6 +39,7 @@ class DoctorCreate(UserCreateBase):
     address: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    information: Optional[str] = None
 
 
 class DoctorOut(BaseModel):
@@ -51,6 +53,7 @@ class DoctorOut(BaseModel):
     address: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    information: Optional[str] = None
     photo: Optional[bytes] = None
     appointments: List[AppointmentOut] = Field(default_factory=list)
     days: List[DayOut] = Field(default_factory=list)

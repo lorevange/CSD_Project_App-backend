@@ -57,4 +57,4 @@ def validate_token(
 
 @router.post("/update/", response_model=UserOut)
 def update_user(body: UserEdit, db: Session = Depends(get_db)):
-    return edit_user(body.identity_number, body.first_name, body.last_name, body.photo, db)
+    return edit_user(body.identity_number, body.first_name, body.last_name, body.photo, body.information, db)
