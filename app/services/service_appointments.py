@@ -60,7 +60,7 @@ def create_appointment(payload, db: Session) -> models.Appointment:
 
 
 def list_appointments(db: Session, doctor_id: int | None = None, user_id: str | None = None,
-                      start_from: datetime | None = None, start_to: datetime | None = None) -> list[models.Appointment]:
+                      start_from: datetime | None = None, start_to: datetime | None = None, status: str | None = None) -> list[models.Appointment]:
     query = db.query(models.Appointment)
     if doctor_id:
         query = query.filter(models.Appointment.doctor_id == doctor_id)
@@ -70,6 +70,8 @@ def list_appointments(db: Session, doctor_id: int | None = None, user_id: str | 
         query = query.filter(models.Appointment.start_datetime >= start_from)
     if start_to:
         query = query.filter(models.Appointment.start_datetime <= start_to)
+    if status:
+        query = query.filter(models.Appointment.status == status)
     return query.order_by(models.Appointment.start_datetime.asc()).all()
 
 

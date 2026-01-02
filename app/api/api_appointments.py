@@ -25,9 +25,10 @@ def list_appointments(
     user_id: Optional[str] = None,
     start_from: Optional[datetime] = None,
     start_to: Optional[datetime] = None,
+    status: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
-    return list_appointments_service(db, doctor_id=doctor_id, user_id=user_id, start_from=start_from, start_to=start_to)
+    return list_appointments_service(db, doctor_id=doctor_id, user_id=user_id, start_from=start_from, start_to=start_to, status=status)
 
 
 @router.patch("/{appointment_id}/status", response_model=schemas.AppointmentOut)
