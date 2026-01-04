@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .api import api_users, api_doctors, api_appointments, api_patients, api_doctor_services
+from .api import api_users, api_doctors, api_appointments, api_patients, api_doctor_services, api_reviews
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,3 +29,4 @@ app.include_router(api_doctors.router)
 app.include_router(api_appointments.router)
 app.include_router(api_doctor_services.router)
 app.include_router(api_patients.router)
+app.include_router(api_reviews.router)

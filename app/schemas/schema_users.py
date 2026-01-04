@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.schemas.schema_appointments import AppointmentOut
 from app.schemas.schema_days import DayOut
 from app.schemas.schema_doctor_services import DoctorServiceOut
+from app.schemas.schema_reviews import ReviewOut
 
 
 class UserCreateBase(BaseModel):
@@ -59,6 +60,12 @@ class DoctorOut(BaseModel):
     days: List[DayOut] = Field(default_factory=list)
     services: List[DoctorServiceOut] = Field(default_factory=list)
     model_config = ConfigDict(from_attributes=True)
+
+
+class DoctorDetailOut(DoctorOut):
+    avg_rating: float = 0.0
+    ratings_count: int = 0
+    reviews: List[ReviewOut] = Field(default_factory=list)
 
 
 class UserOut(UserBase):

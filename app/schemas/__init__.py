@@ -1,9 +1,9 @@
-from .schema_users import UserBase, UserCreateBase, UserEdit, DoctorCreate, DoctorOut, UserOut
+from .schema_users import UserBase, UserCreateBase, UserEdit, DoctorCreate, DoctorOut, DoctorDetailOut, UserOut
 from .schema_doctor_services import DoctorServiceCreate, DoctorServiceUpdate, DoctorServiceOut
 from .schema_appointments import AppointmentCreate, AppointmentOut
 from .schema_days import DayCreate, DayOut
 from .schema_logins import LoginRequest, LoginResponse
-from .schema_users import UserOut
+from .schema_reviews import ReviewCreate, ReviewUpdate, ReviewOut, ReviewAuthorOut
 
 __all__ = [
     "UserBase",
@@ -11,6 +11,7 @@ __all__ = [
     "UserEdit",
     "DoctorCreate",
     "DoctorOut",
+    "DoctorDetailOut",
     "UserOut",
     "DoctorServiceCreate",
     "DoctorServiceUpdate",
@@ -19,5 +20,10 @@ __all__ = [
     "AppointmentOut",
     "DayCreate",
     "DayOut",
-    "LoginRequest"
+    "LoginRequest",
+    "LoginResponse",
+    "ReviewCreate",
+    "ReviewUpdate",
+    "ReviewOut",
+    "ReviewAuthorOut",
 ]

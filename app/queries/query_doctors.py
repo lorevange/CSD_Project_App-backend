@@ -1,6 +1,6 @@
 from fastapi import HTTPException
-from sqlalchemy import case, or_
-from sqlalchemy.orm import Session
+from sqlalchemy import case, func, or_
+from sqlalchemy.orm import Session, selectinload
 
 from app import models
 
@@ -48,3 +48,36 @@ def search_doctors(db: Session, query: str | None = None, city: str | None = Non
         models.Doctor.last_name.asc(),
         models.Doctor.first_name.asc()
     ).all()
+
+
+def get_doctor_detail(doctor_id: int, db: Session) -> models.Doctor:
+    doctor = (
+        db.query(models.Doctor)
+        .options(
+            selectinload(models.Doctor.appointments),
+            selectinload(models.Doctor.days),
+            selectinload(models.Doctor.services),
+            selectinload(models.Doctor.reviews).selectinload(models.Review.author),
+        )
+        .filter(models.Doctor.id == doctor_id)
+        .first()
+    )
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+
+    stats = (
+        db.query(
+            func.coalesce(func.avg(models.Review.rating), 0),
+            func.count(models.Review.id),
+        )
+        .filter(
+            models.Review.doctor_id == doctor_id,
+            models.Review.deleted_at.is_(None),
+        )
+        .first()
+    )
+    avg_rating, ratings_count = stats
+    doctor.avg_rating = float(avg_rating) if avg_rating is not None else 0.0
+    doctor.ratings_count = ratings_count or 0
+    doctor.reviews = sorted(doctor.reviews, key=lambda r: r.created_at, reverse=True)
+    return doctor
