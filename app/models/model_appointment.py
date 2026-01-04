@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.orm import relationship
 from datetime import timedelta
 
@@ -12,15 +12,18 @@ class Appointment(Base):
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    doctor_id = Column(String, ForeignKey("Doctor.identity_number"), nullable=False)
-    user_id = Column(String, ForeignKey("User.identity_number"), nullable=False)
+    doctor_id = Column(Integer, ForeignKey("Doctor.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("User.id"), nullable=False)
+    doctor_service_id = Column(Integer, ForeignKey("DoctorService.id"), nullable=False)
     start_datetime = Column(DateTime, nullable=False)
     end_datetime = Column(DateTime, nullable=False)
     examination_type = Column(String, nullable=False)
+    price_at_booking = Column(Numeric(10, 2), nullable=False)
     notes = Column(Text, nullable=True)
     status = Column(String, nullable=False, default="scheduled")
 
     doctor = relationship("Doctor", back_populates="appointments")
+    doctor_service = relationship("DoctorService", back_populates="appointments")
     user = relationship("User", back_populates="appointments")
 
     @staticmethod

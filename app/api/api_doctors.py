@@ -15,7 +15,7 @@ router = APIRouter(prefix="/doctors", tags=["doctors"])
 def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
     db_user = create_user(doctor, profile="doctor", db=db)
     db_doctor = models.Doctor(
-        identity_number=doctor.identity_number,
+        user_id=db_user.id,
         first_name=doctor.first_name,
         last_name=doctor.last_name,
         license_number=doctor.license_number,
@@ -24,6 +24,7 @@ def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
         address=doctor.address,
         latitude=doctor.latitude,
         longitude=doctor.longitude,
+        information=doctor.information,
     )
     db.add(db_doctor)
     db.commit()
@@ -37,5 +38,5 @@ def search_doctor(query: str | None = None, city: str | None = None, db: Session
 
 
 @router.get("/{doctor_id}", response_model=schemas.DoctorOut)
-def get_doctor(doctor_id: str, db: Session = Depends(get_db)):
+def get_doctor(doctor_id: int, db: Session = Depends(get_db)):
     return get_doctor_by_id(doctor_id, db)

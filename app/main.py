@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .api import api_users, api_doctors, api_appointments, api_patients
+from .api import api_users, api_doctors, api_appointments, api_patients, api_doctor_services
 
 Base.metadata.create_all(bind=engine)
 
@@ -27,4 +27,5 @@ app.add_middleware(
 app.include_router(api_users.router)
 app.include_router(api_doctors.router)
 app.include_router(api_appointments.router)
+app.include_router(api_doctor_services.router)
 app.include_router(api_patients.router)
