@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..deps import get_db
 from ..services.service_user import create_user
-from ..queries.query_doctors import get_doctor_by_id, search_doctors
+from ..queries.query_doctors import get_doctor_detail, search_doctors
 
 router = APIRouter(prefix="/doctors", tags=["doctors"])
 
@@ -37,6 +37,6 @@ def search_doctor(query: str | None = None, city: str | None = None, db: Session
     return search_doctors(query=query, city=city, db=db)
 
 
-@router.get("/{doctor_id}", response_model=schemas.DoctorOut)
+@router.get("/{doctor_id}", response_model=schemas.DoctorDetailOut)
 def get_doctor(doctor_id: int, db: Session = Depends(get_db)):
-    return get_doctor_by_id(doctor_id, db)
+    return get_doctor_detail(doctor_id, db)

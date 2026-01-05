@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, Text, UniqueConstraint
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, Numeric, String, Text, text
 from sqlalchemy.orm import relationship
 from datetime import timedelta
 
@@ -8,7 +8,14 @@ from app.database import Base
 class Appointment(Base):
     __tablename__ = "Appointment"
     __table_args__ = (
-        UniqueConstraint("doctor_id", "start_datetime", name="uq_doctor_slot"),
+        Index(
+            "uq_doctor_slot_scheduled",
+            "doctor_id",
+            "start_datetime",
+            unique=True,
+            sqlite_where=text("status = 'scheduled'"),
+            postgresql_where=text("status = 'scheduled'"),
+        ),
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)

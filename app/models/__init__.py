@@ -3,6 +3,7 @@ from .model_user import User, Doctor
 from .model_doctor_service import DoctorService
 from .model_appointment import Appointment
 from .model_day import Day
+from .model_review import Review
 
 __all__ = [
     "Base",
@@ -11,4 +12,5 @@ __all__ = [
     "DoctorService",
     "Appointment",
     "Day",
+    "Review",
 ]
