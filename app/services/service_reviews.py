@@ -4,8 +4,12 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app import models
+from app.config import settings
 from app.queries.query_doctors import get_doctor_by_id
 from app.queries.query_reviews import get_review_by_id, get_reviews_for_doctor
+from google import genai
+from google.api_core.exceptions import GoogleAPIError, ResourceExhausted, NotFound
+from openai import APIStatusError, OpenAI
 
 
 def create_review(doctor_id: int, payload, current_user: models.User, db: Session) -> models.Review:
@@ -73,3 +77,92 @@ def delete_review(review_id: int, current_user: models.User, db: Session) -> Non
     review.deleted_at = datetime.utcnow()
     review.updated_at = datetime.utcnow()
     db.commit()
+
+
+def summarize_reviews_for_doctor(doctor_id: int, db: Session) -> dict:
+    doctor = get_doctor_by_id(doctor_id, db)
+    reviews = get_reviews_for_doctor(doctor.id, db, skip=0, limit=200)
+    if not reviews:
+        return {"summary": "No reviews available for this doctor yet.", "word_count": 8}
+
+    comments = [review.comment.strip() for review in reviews if review.comment]
+    summary = ""
+    if settings.gemini_api_key:
+        summary = _summarize_with_gemini(comments, doctor.id)
+    elif settings.openai_api_key:
+        summary = _summarize_with_openai(comments, doctor.id)
+    else:
+        raise HTTPException(status_code=500, detail="No LLM API key configured (Gemini or OpenAI).")
+
+    words = summary.split()
+    if len(words) > 100:
+        summary = " ".join(words[:100])
+    return {"summary": summary, "word_count": len(summary.split())}
+
+
+def _summarize_with_gemini(comments: list[str], doctor_id: int) -> str:
+    client = genai.Client(api_key=settings.gemini_api_key)
+    prompt_reviews = "\n".join(f"- {comment}" for comment in comments)
+    prompt = (
+        "You summarize patient reviews for doctors. Be concise, neutral, and avoid PII.\n"
+        f"Doctor ID: {doctor_id}\n"
+        "Reviews:\n"
+        f"{prompt_reviews}\n\n"
+        "Summarize the above reviews in no more than 100 words. Mention common positives and negatives. Keep it factual."
+    )
+    try:
+        response = client.models.generate_content(
+            model=settings.gemini_model,
+            contents=prompt,
+        )
+    except ResourceExhausted as exc:  # pragma: no cover - external call
+        raise HTTPException(
+            status_code=503, detail="LLM temporarily unavailable (quota or rate limit). Try again later."
+        )
+    except NotFound as exc:  # pragma: no cover - external call
+        raise HTTPException(
+            status_code=502,
+            detail="Requested Gemini model not found. Update gemini_model or check your API version.",
+        )
+    except GoogleAPIError as exc:  # pragma: no cover - external call
+        raise HTTPException(status_code=502, detail=f"Failed to generate summary: {exc}")
+    except Exception as exc:  # pragma: no cover - external call
+        raise HTTPException(status_code=502, detail=f"Failed to generate summary: {exc}")
+    text = (response.text or "").strip() if response else ""
+    return text
+
+
+def _summarize_with_openai(comments: list[str], doctor_id: int) -> str:
+    prompt_reviews = "\n".join(f"- {comment}" for comment in comments)
+    client = OpenAI(api_key=settings.openai_api_key)
+    messages = [
+        {"role": "system", "content": "You summarize patient reviews for doctors. Be concise, neutral, and avoid PII."},
+        {
+            "role": "user",
+            "content": (
+                "Doctor ID: {doctor_id}\n"
+                "Reviews:\n"
+                "{reviews}\n\n"
+                "Summarize the above reviews in no more than 100 words. "
+                "Mention common positives and negatives. Keep it factual."
+            ).format(doctor_id=doctor_id, reviews=prompt_reviews),
+        },
+    ]
+
+    try:
+        completion = client.chat.completions.create(
+            model=settings.openai_model,
+            messages=messages,
+            max_tokens=220,
+            temperature=0.3,
+        )
+    except APIStatusError as exc:  # pragma: no cover - external call
+        if exc.status_code == 429:
+            raise HTTPException(
+                status_code=503, detail="LLM temporarily unavailable (quota or rate limit). Try again later."
+            )
+        raise HTTPException(status_code=502, detail=f"Failed to generate summary: {exc}")
+    except Exception as exc:  # pragma: no cover - external call
+        raise HTTPException(status_code=502, detail=f"Failed to generate summary: {exc}")
+
+    return completion.choices[0].message.content.strip() if completion.choices else ""

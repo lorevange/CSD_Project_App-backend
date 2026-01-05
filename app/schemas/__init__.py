@@ -3,7 +3,7 @@ from .schema_doctor_services import DoctorServiceCreate, DoctorServiceUpdate, Do
 from .schema_appointments import AppointmentCreate, AppointmentOut
 from .schema_days import DayCreate, DayOut
 from .schema_logins import LoginRequest, LoginResponse
-from .schema_reviews import ReviewCreate, ReviewUpdate, ReviewOut, ReviewAuthorOut
+from .schema_reviews import ReviewCreate, ReviewUpdate, ReviewOut, ReviewAuthorOut, ReviewSummary
 
 __all__ = [
     "UserBase",
@@ -26,4 +26,5 @@ __all__ = [
     "ReviewUpdate",
     "ReviewOut",
     "ReviewAuthorOut",
+    "ReviewSummary",
 ]

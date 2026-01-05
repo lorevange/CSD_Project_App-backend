@@ -31,6 +31,14 @@ def list_reviews_for_doctor(
     return service_reviews.list_reviews_for_doctor(doctor_id, db, skip=skip, limit=limit)
 
 
+@router.get("/doctors/{doctor_id}/reviews/summary", response_model=schemas.ReviewSummary)
+def summarize_reviews_for_doctor(
+    doctor_id: int,
+    db: Session = Depends(get_db),
+):
+    return service_reviews.summarize_reviews_for_doctor(doctor_id, db)
+
+
 @router.patch("/reviews/{review_id}", response_model=schemas.ReviewOut)
 def update_review(
     review_id: int,
