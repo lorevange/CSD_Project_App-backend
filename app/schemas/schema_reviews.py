@@ -44,3 +44,8 @@ class ReviewOut(BaseModel):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ReviewSummary(BaseModel):
+    summary: str
+    word_count: int
