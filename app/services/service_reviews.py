@@ -79,18 +79,19 @@ def delete_review(review_id: int, current_user: models.User, db: Session) -> Non
     db.commit()
 
 
-def summarize_reviews_for_doctor(doctor_id: int, db: Session) -> dict:
+def summarize_reviews_for_doctor(doctor_id: int, db: Session, language: str | None = None) -> dict:
     doctor = get_doctor_by_id(doctor_id, db)
     reviews = get_reviews_for_doctor(doctor.id, db, skip=0, limit=200)
     if not reviews:
         return {"summary": "No reviews available for this doctor yet.", "word_count": 8}
 
     comments = [review.comment.strip() for review in reviews if review.comment]
+    preferred_language = (language or "English").strip() or "English"
     summary = ""
     if settings.gemini_api_key:
-        summary = _summarize_with_gemini(comments, doctor.id)
+        summary = _summarize_with_gemini(comments, doctor.id, preferred_language)
     elif settings.openai_api_key:
-        summary = _summarize_with_openai(comments, doctor.id)
+        summary = _summarize_with_openai(comments, doctor.id, preferred_language)
     else:
         raise HTTPException(status_code=500, detail="No LLM API key configured (Gemini or OpenAI).")
 
@@ -100,20 +101,20 @@ def summarize_reviews_for_doctor(doctor_id: int, db: Session) -> dict:
     return {"summary": summary, "word_count": len(summary.split())}
 
 
-def _summarize_with_gemini(comments: list[str], doctor_id: int) -> str:
+def _summarize_with_gemini(comments: list[str], doctor_id: int, language: str) -> str:
     client = genai.Client(api_key=settings.gemini_api_key)
     prompt_reviews = "\n".join(f"- {comment}" for comment in comments)
     prompt = (
         "You summarize patient reviews for doctors. Be concise, neutral, and avoid PII.\n"
-        f"Doctor ID: {doctor_id}\n"
         "Reviews:\n"
         f"{prompt_reviews}\n\n"
-        "Summarize the above reviews in no more than 100 words. Mention common positives and negatives. Keep it factual."
+        "Summarize the above reviews in no more than 100 words. Mention common positives and negatives. "
+        "Do not use markdown. Keep it factual. Respond in {language}."
     )
     try:
         response = client.models.generate_content(
             model=settings.gemini_model,
-            contents=prompt,
+            contents=prompt.format(language=language),
         )
     except ResourceExhausted as exc:  # pragma: no cover - external call
         raise HTTPException(
@@ -132,20 +133,24 @@ def _summarize_with_gemini(comments: list[str], doctor_id: int) -> str:
     return text
 
 
-def _summarize_with_openai(comments: list[str], doctor_id: int) -> str:
+def _summarize_with_openai(comments: list[str], doctor_id: int, language: str) -> str:
     prompt_reviews = "\n".join(f"- {comment}" for comment in comments)
     client = OpenAI(api_key=settings.openai_api_key)
     messages = [
-        {"role": "system", "content": "You summarize patient reviews for doctors. Be concise, neutral, and avoid PII."},
+        {
+            "role": "system",
+            "content": (
+                "You summarize patient reviews for doctors. Be concise, neutral, avoid PII, and respond in {language}."
+            ).format(language=language),
+        },
         {
             "role": "user",
             "content": (
-                "Doctor ID: {doctor_id}\n"
                 "Reviews:\n"
                 "{reviews}\n\n"
                 "Summarize the above reviews in no more than 100 words. "
-                "Mention common positives and negatives. Keep it factual."
-            ).format(doctor_id=doctor_id, reviews=prompt_reviews),
+                "Mention common positives and negatives. Keep it factual. Respond in {language}."
+            ).format(doctor_id=doctor_id, reviews=prompt_reviews, language=language),
         },
     ]
 
