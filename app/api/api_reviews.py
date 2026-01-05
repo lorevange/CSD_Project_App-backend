@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app import schemas, models
@@ -34,9 +34,10 @@ def list_reviews_for_doctor(
 @router.get("/doctors/{doctor_id}/reviews/summary", response_model=schemas.ReviewSummary)
 def summarize_reviews_for_doctor(
     doctor_id: int,
+    language: str | None = Query(None, description="Desired response language (e.g., en, es, fr)"),
     db: Session = Depends(get_db),
 ):
-    return service_reviews.summarize_reviews_for_doctor(doctor_id, db)
+    return service_reviews.summarize_reviews_for_doctor(doctor_id, db, language)
 
 
 @router.patch("/reviews/{review_id}", response_model=schemas.ReviewOut)
