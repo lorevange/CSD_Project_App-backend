@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Float, ForeignKey, Integer, LargeBinary, String, Text, and_
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, LargeBinary, String, Text, and_
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
@@ -18,6 +18,10 @@ class User(Base):
     phone_number = Column(String, nullable=True)
     password = Column(String, nullable=True)
     photo = Column(LargeBinary, nullable=True)
+    verification_code = Column(String(5), nullable=True, index=True)
+    verification_expires_at = Column(DateTime, nullable=True)
+    last_verification_sent_at = Column(DateTime, nullable=True)
+    is_verified = Column(Boolean, default=False, nullable=False)
 
     doctor = relationship("Doctor", back_populates="user", uselist=False)
     appointments = relationship("Appointment", back_populates="user", foreign_keys="Appointment.user_id")

@@ -1,18 +1,19 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
 
 from .. import models, schemas
 from ..deps import get_db
 from ..services.service_user import create_user
 from ..queries.query_doctors import get_doctor_detail, search_doctors
+from ..services.email import send_verification_email
 
 router = APIRouter(prefix="/doctors", tags=["doctors"])
 
 
 @router.post("/", response_model=schemas.UserOut)
-def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
+def create_doctor(doctor: schemas.DoctorCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     db_user = create_user(doctor, profile="doctor", db=db)
     db_doctor = models.Doctor(
         user_id=db_user.id,
@@ -29,6 +30,7 @@ def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
     db.add(db_doctor)
     db.commit()
     db.refresh(db_user)
+    background_tasks.add_task(send_verification_email, db_user.email, db_user.verification_code)
     return db_user
 
 

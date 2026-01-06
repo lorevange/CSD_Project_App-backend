@@ -1,4 +1,14 @@
-from .schema_users import UserBase, UserCreateBase, UserEdit, DoctorCreate, DoctorOut, DoctorDetailOut, UserOut
+from .schema_users import (
+    UserBase,
+    UserCreateBase,
+    UserEdit,
+    DoctorCreate,
+    DoctorOut,
+    DoctorDetailOut,
+    UserOut,
+    VerifyEmailRequest,
+    ResendVerificationRequest,
+)
 from .schema_doctor_services import DoctorServiceCreate, DoctorServiceUpdate, DoctorServiceOut
 from .schema_appointments import AppointmentCreate, AppointmentOut
 from .schema_days import DayCreate, DayOut
@@ -13,6 +23,8 @@ __all__ = [
     "DoctorOut",
     "DoctorDetailOut",
     "UserOut",
+    "VerifyEmailRequest",
+    "ResendVerificationRequest",
     "DoctorServiceCreate",
     "DoctorServiceUpdate",
     "DoctorServiceOut",
