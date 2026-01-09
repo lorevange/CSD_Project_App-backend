@@ -11,6 +11,11 @@ def get_doctor_by_id(doctor_id: int, db: Session) -> models.Doctor:
     return doctor
 
 
+def get_doctor_by_license_number(license_number:int, db:Session) -> models.Doctor:
+    doctor = db.query(models.Doctor).filter(models.Doctor.license_number == license_number).first()
+    
+    return doctor
+
 def search_doctors(db: Session, query: str | None = None, city: str | None = None) -> list[models.Doctor]:
     if not query and not city:
         return db.query(models.Doctor).order_by(

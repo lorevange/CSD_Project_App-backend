@@ -4,12 +4,12 @@ from fastapi import HTTPException
 from app import models, schemas
 from ..queries.query_users import get_user_by_email, get_user_by_identity_number
 
-
 def create_user(base: schemas.UserCreateBase, profile: str, db: Session) -> models.User:
     """Create and persist a base User row."""
     if get_user_by_email(base.email, db):
         raise HTTPException(status_code=404, detail="There is already a user associated to this email.")
-    
+    if get_user_by_identity_number(base.identity_number, db):
+        raise HTTPException(status_code=404, detail="There is already a user associated to this identity_number.")
     user = models.User(
         first_name=base.first_name,
         last_name=base.last_name,

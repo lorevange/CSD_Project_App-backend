@@ -2,17 +2,19 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
+from fastapi import HTTPException
 from .. import models, schemas
 from ..deps import get_db
 from ..services.service_user import create_user
-from ..queries.query_doctors import get_doctor_detail, search_doctors
+from ..queries.query_doctors import get_doctor_detail, search_doctors, get_doctor_by_license_number
 
 router = APIRouter(prefix="/doctors", tags=["doctors"])
 
 
 @router.post("/", response_model=schemas.UserOut)
 def create_doctor(doctor: schemas.DoctorCreate, db: Session = Depends(get_db)):
+    if get_doctor_by_license_number(doctor.license_number, db):
+        raise HTTPException(status_code=400, detail="There is already a doctor with this license number.")
     db_user = create_user(doctor, profile="doctor", db=db)
     db_doctor = models.Doctor(
         user_id=db_user.id,
