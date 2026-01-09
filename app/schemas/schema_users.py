@@ -25,6 +25,7 @@ class UserBase(BaseModel):
     email: str
     phone_number: Optional[str] = None
     photo: Optional[bytes] = None
+    is_verified: bool = False
 
 class UserEdit(BaseModel):
     first_name: str
@@ -75,3 +76,12 @@ class UserOut(UserBase):
     appointments: List[AppointmentOut] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class VerifyEmailRequest(BaseModel):
+    email: str
+    code: str
+
+
+class ResendVerificationRequest(BaseModel):
+    email: str
