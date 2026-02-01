@@ -14,6 +14,18 @@ from .schema_appointments import AppointmentCreate, AppointmentOut
 from .schema_days import DayCreate, DayOut
 from .schema_logins import LoginRequest, LoginResponse
 from .schema_reviews import ReviewCreate, ReviewUpdate, ReviewOut, ReviewAuthorOut, ReviewSummary
+from .schema_doctor_profiles import (
+    DoctorProfileRequest,
+    DoctorProfileResponse,
+    DoctorProfileAppointmentsFilter,
+    DoctorProfileReviewsFilter,
+    DoctorProfileReviewSummaryFilter,
+    DoctorProfileOut,
+    AppointmentProfileOut,
+    ReviewPublicOut,
+    ReviewAuthorPublicOut,
+    TranslatedText,
+)
 
 __all__ = [
     "UserBase",
@@ -39,4 +51,14 @@ __all__ = [
     "ReviewOut",
     "ReviewAuthorOut",
     "ReviewSummary",
+    "DoctorProfileRequest",
+    "DoctorProfileResponse",
+    "DoctorProfileAppointmentsFilter",
+    "DoctorProfileReviewsFilter",
+    "DoctorProfileReviewSummaryFilter",
+    "DoctorProfileOut",
+    "AppointmentProfileOut",
+    "ReviewPublicOut",
+    "ReviewAuthorPublicOut",
+    "TranslatedText",
 ]

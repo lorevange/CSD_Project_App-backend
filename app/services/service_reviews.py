@@ -96,8 +96,8 @@ def summarize_reviews_for_doctor(doctor_id: int, db: Session, language: str | No
         raise HTTPException(status_code=500, detail="No LLM API key configured (Gemini or OpenAI).")
 
     words = summary.split()
-    if len(words) > 100:
-        summary = " ".join(words[:100])
+    if len(words) > 220:
+        summary = " ".join(words[:220])
     return {"summary": summary, "word_count": len(summary.split())}
 
 
@@ -105,16 +105,20 @@ def _summarize_with_gemini(comments: list[str], doctor_id: int, language: str) -
     client = genai.Client(api_key=settings.gemini_api_key)
     prompt_reviews = "\n".join(f"- {comment}" for comment in comments)
     prompt = (
-        "You summarize patient reviews for doctors. Be concise, neutral, and avoid PII.\n"
+        "You summarize patient reviews for a doctor. Be concise, neutral, and avoid PII.\n"
         "Reviews:\n"
         f"{prompt_reviews}\n\n"
-        "Summarize the above reviews in no more than 100 words. Mention common positives and negatives. "
-        "Do not use markdown. Keep it factual. Respond in {language}."
+        "Summarize the above reviews in two languages: English and Italian.\n"
+        "Provide two labeled lines exactly as:\n"
+        "EN: <English summary>\n"
+        "IT: <Italian summary>\n"
+        "Each summary must be no more than 100 words. Mention common positives and negatives. "
+        "Do not use markdown. Do not use parenthesis or columns. Keep it factual."
     )
     try:
         response = client.models.generate_content(
             model=settings.gemini_model,
-            contents=prompt.format(language=language),
+            contents=prompt,
         )
     except ResourceExhausted as exc:  # pragma: no cover - external call
         raise HTTPException(
