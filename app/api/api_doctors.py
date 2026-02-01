@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from .. import models, schemas
 from ..deps import get_db
 from ..services.service_user import create_user
+from ..services import service_doctor_profiles
 from ..queries.query_doctors import get_doctor_detail, search_doctors, get_doctor_by_license_number
 from ..services.email import send_verification_email
 
@@ -45,3 +46,13 @@ def search_doctor(query: str | None = None, city: str | None = None, db: Session
 @router.get("/{doctor_id}", response_model=schemas.DoctorDetailOut)
 def get_doctor(doctor_id: int, db: Session = Depends(get_db)):
     return get_doctor_detail(doctor_id, db)
+
+
+@router.post(
+    "/profile",
+    response_model=schemas.DoctorProfileResponse,
+    response_model_exclude_none=True,
+    response_model_by_alias=True,
+)
+def get_doctor_profile(payload: schemas.DoctorProfileRequest, db: Session = Depends(get_db)):
+    return service_doctor_profiles.get_doctor_profile(payload, db)
