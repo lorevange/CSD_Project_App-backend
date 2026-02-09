@@ -2,6 +2,8 @@ import smtplib
 import ssl
 from email.message import EmailMessage
 
+import certifi
+
 from app.config import settings
 
 
@@ -22,7 +24,8 @@ def send_verification_email(to_email: str, code: str) -> None:
     msg["To"] = to_email
     msg.set_content(f"Your verification code is: {code}")
 
-    context = ssl.create_default_context()
+    # Use certifi CA bundle to avoid platform-specific trust-store issues.
+    context = ssl.create_default_context(cafile=certifi.where())
     with smtplib.SMTP_SSL(host, port, context=context) as server:
         server.login(username, password)
         server.send_message(msg)
